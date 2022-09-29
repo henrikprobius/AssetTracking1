@@ -14,18 +14,24 @@ namespace AssetTracking1.Models
 
         public DateOnly PurchaseDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
 
-        public Office? Office { get; set; }
-        public Price? PurchasePrice { get; set; }
-
+        public Office Office { get; set; }
+        
+     
+        public Price PurchasePrice { get;} = new Price();
+        
+        
         public DateOnly EndOfLifeDate { get {
                 return PurchaseDate.AddMonths(AssetLifespanInMonths);} }
 
-        protected Asset(Price price, DateOnly purchaseDate, string model, Brand brandName = Brand.Unknown)
+        protected Asset() { }
+
+        protected Asset(Office office, Price price, DateOnly purchaseDate, string model, Brand brandName = Brand.Unknown)
         {
             Model = model;
             BrandName = brandName;   
             PurchasePrice = price;
-            PurchaseDate = purchaseDate;    
+            PurchaseDate = purchaseDate; 
+            Office = office;    
         }
 
 
@@ -47,7 +53,9 @@ namespace AssetTracking1.Models
 
     public class Laptop : Computer
     {
-        public Laptop(Price price, DateOnly purchaseDate, string model, Brand brandName = Brand.Unknown) : base(price, purchaseDate, model, brandName)
+        public Laptop() { }
+
+        public Laptop(Office office,Price price, DateOnly purchaseDate, string model, Brand brandName = Brand.Unknown) : base(office, price, purchaseDate, model, brandName)
         { }
 
         public override string GetAssetType()
@@ -59,7 +67,8 @@ namespace AssetTracking1.Models
 
     public class Desktop : Computer
     {
-        public Desktop(Price price, DateOnly purchaseDate, string model, Brand brandName = Brand.Unknown) : base(price, purchaseDate, model, brandName)
+        public Desktop() { }
+        public Desktop(Office office,Price price, DateOnly purchaseDate, string model, Brand brandName = Brand.Unknown) : base(office, price, purchaseDate, model, brandName)
         { }
 
         public override string GetAssetType()
@@ -70,7 +79,8 @@ namespace AssetTracking1.Models
 
     public class Mobile : Asset
     {
-        public Mobile(Price price, DateOnly purchaseDate, string model, Brand brandName = Brand.Unknown) : base(price, purchaseDate, model, brandName)
+        public Mobile() { }
+        public Mobile(Office office,Price price, DateOnly purchaseDate, string model, Brand brandName = Brand.Unknown) : base(office, price, purchaseDate, model, brandName)
         { }
 
         public override string GetAssetType()
@@ -82,7 +92,8 @@ namespace AssetTracking1.Models
 
     public abstract class Computer : Asset
     {
-        public Computer(Price price, DateOnly purchaseDate, string model, Brand brandName = Brand.Unknown) : base(price, purchaseDate, model, brandName)
+        public Computer() { }
+        public Computer(Office office,Price price, DateOnly purchaseDate, string model, Brand brandName = Brand.Unknown) : base(office, price, purchaseDate, model, brandName)
         { }
 
         public override string GetAssetType()
@@ -95,31 +106,42 @@ namespace AssetTracking1.Models
 
     public class Office
     {
-        String  Name { get; set; } = String.Empty;
+        public Office() { }
 
-        public Office(String name)
+        [Required]
+        public String  Name { get; set; } = String.Empty;
+
+        [Required]
+        public String Currency { get; set; } = "USD";
+
+        public Office(String name, string currency)
         {
             this.Name = name;
+            Currency = currency;    
         }
 
     }//class Office
 
 
-    public class Price
+    public class Price: IComparable<Price>
     {
+        [Required]
         public decimal PurchasePrice { get; set; } = 0.0M;
-        public String? Currency { get; set; }
 
-        public Price(decimal price = 0.0M, string currency = "")
+        [Required]
+        public String Currency { get; set; } = "USD";
+
+        public int CompareTo(Price price)
+        {
+            return this.PurchasePrice.CompareTo(price.PurchasePrice);
+        }
+        public Price(decimal price = 0.0M)
         {
             this.PurchasePrice = price;
-            this.Currency = currency;   
+          
         }
 
     }//class Price
-
-
-
 
 
     [System.Flags]
@@ -127,7 +149,7 @@ namespace AssetTracking1.Models
     { 
         Apple       = 0,  
         Asus        = 2,
-        HP          = 4, 
+        Hp          = 4, 
         Huawei      = 8,    
         Lenovo      = 16,
         Motorola    = 32,
