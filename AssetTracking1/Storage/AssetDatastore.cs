@@ -5,14 +5,12 @@ namespace AssetTracking1.Storage
 {
     internal class AssetDatastore:IDisposable
     {
-        //public List<Asset> Assets = new();
-        //  public static Dictionary<string, Office> offices = new();
-
         public DatabaseContext context = new DatabaseContext(); 
 
         public AssetDatastore()
         {
             context.DropAndCreateDB();
+            this.AddTestAssets();
 
         }
         public (bool, string) AddAsset(string[] data)
@@ -57,29 +55,49 @@ namespace AssetTracking1.Storage
             return context.Assets.ToList();
         }
 
-        private void LoadTestData()
+        private void AddTestAssets()
         {
 
-            var teststring = "Laptop,modelxyz,2023 - 12 - 30, 345.56, Nokia, 1";
-            //Assets.Clear();
-            /*
+            Console.WriteLine("*************** Testcases ******************");
 
-                        Assets.Add(new Mobile(o1, new Price(45), new DateOnly(2022, 3, 4), "Model abcs", Brand.Nokia));
-                        Assets.Add(new Mobile(o1, new Price(455), new DateOnly(2020, 4, 4), "Model 13", Brand.Apple));
-                        Assets.Add(new Mobile(o3, new Price(51), new DateOnly(2010, 10, 4), "Model 3", Brand.Apple));
-                        Assets.Add(new Mobile(o1, new Price(598), new DateOnly(2019, 11, 12), "Model 45", Brand.Samsung));
-                        Assets.Add(new Mobile(o1, new Price(468), new DateOnly(2020, 2, 12), "Modelito", Brand.Motorola));
+            String[] samples =
+            {
+                 //success
+                "Laptop,modelxyz,2023-12-30, 345.56, Nokia,3",
+                "Desktop,modelxyz,2023-12-30, 707, Nokia,2",
+                "Mobile,modelxyz,2021-12-30, 98, samsung,3",
+                "mobile,yellow,2020-01-26, 551, HP,2",  //yellow
+                "desktop,red,2019-11-01, 942, Apple,1",  //red
+                "Laptop,NiceDate,12/3 2020, 347.23, Nokia,2"
+            };
 
-                        Assets.Add(new Laptop(o2, new Price(1148), new DateOnly(2022, 3, 23), "Model sedrgerg", Brand.Hp));
-                        Assets.Add(new Laptop(o1, new Price(1455), new DateOnly(2022, 5, 14), "Modello 5", Brand.Hp));
-                        Assets.Add(new Laptop(o3, new Price(1271), new DateOnly(2019, 9, 14), "Modello 5", Brand.Lenovo));
-                        Assets.Add(new Laptop(o1, new Price(3127), new DateOnly(2019, 9, 12), "Modello 5 EOL", Brand.Lenovo));
+            String[] split;
+            (bool success, string msg) msg = (false, "");
 
-                        Assets.Add(new Desktop(o1, new Price(1235), new DateOnly(2022, 4, 30), "Modello 66", Brand.Lenovo));
-                        Assets.Add(new Desktop(o2, new Price(5999), new DateOnly(2022, 5, 2), "Topping", Brand.Asus));
-                        Assets.Add(new Desktop(o1, new Price(2389), new DateOnly(2019, 10, 5), "ToppingChoklad", Brand.Asus));
-                        Assets.Add(new Desktop(o3, new Price(7399), new DateOnly(2020, 1, 26), "ToppingBanan", Brand.Lenovo));
-            */
+            foreach (String sample in samples)
+            {
+                try
+                {
+                    split = StringExtensions.Split(sample, ",", 6);
+                    msg = AddAsset(split);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(sample + "    Generated error: " + e.Message);
+                }
+
+                Console.WriteLine(sample + "    Generated output: " + msg.success + " " + msg.msg);
+            }
+            /*             
+                         //failure
+            "jmobile,modelxyz,2021-12-30, 551, HP,2",
+            "mobile,modelxyz,2021-12-30, 551,3",
+            "",
+            "mobile,modelxyz,2021-12-30, sss, HP,1",
+            "laptop,modelxyz,2021-02-30, 44.7, HP,3",
+            "Laptop,modejjz,2021-01-30, 44.7, NoBrand,1",
+            "Laptop,NiceDate,12/3 2020, 347.23, Nokia,4"             
+             */
         }
 
         public void Dispose()

@@ -98,47 +98,7 @@ void PrintAssets()
 
 void Test()
 {
-    Console.WriteLine("*************** Testcases ******************");
-
-    String[] samples =
-    {
-        //success
-        "Laptop,modelxyz,2023-12-30, 345.56, Nokia,3",
-        "Desktop,modelxyz,2023-12-30, 707, Nokia,2",
-        "Mobile,modelxyz,2021-12-30, 98, samsung,3",
-        "mobile,yellow,2020-01-26, 551, HP,2",  //yellow
-        "desktop,red,2019-10-01, 942, Apple,1",  //red
-        "Laptop,NiceDate,12/3 2020, 347.23, Nokia,2",
-
-        //failure
-        "jmobile,modelxyz,2021-12-30, 551, HP,2",
-        "mobile,modelxyz,2021-12-30, 551,3",
-        "",
-        "mobile,modelxyz,2021-12-30, sss, HP,1",
-        "laptop,modelxyz,2021-02-30, 44.7, HP,3",
-        "Laptop,modejjz,2021-01-30, 44.7, NoBrand,1",
-        "Laptop,NiceDate,12/3 2020, 347.23, Nokia,4"
-
-    };
-    String[] split;
-    (bool success, string msg) msg = (false, "");
-
-    foreach (String sample in samples)
-    {
-        try
-        {
-            split = StringExtensions.Split(sample, ",", 6);
-            msg = store.AddAsset(split);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(sample + "    Generated error: " + e.Message);
-        }
-
-        Console.WriteLine(sample + "    Generated output: "+ msg.success + " " + msg.msg);
-    }
-
-   // Console.WriteLine("AssetCount = "+ AssetDatastore.Assets.Count().ToString());
+   
 
 }
 
