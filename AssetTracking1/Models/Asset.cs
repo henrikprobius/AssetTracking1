@@ -1,48 +1,51 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AssetTracking1.Models
 {
-    public abstract class Asset
+    public class Asset
     {
         public static readonly int AssetLifespanInMonths = 36;
-        
+
+        public Guid AssetId { get; set; } = Guid.Empty; 
+
         [Required]
         public String Model { get; set; } = String.Empty;
         public Brand BrandName { get; set; } = Brand.Unknown;
 
 
-        public DateOnly PurchaseDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+        public DateTime PurchaseDate { get; set; } =DateTime.Now;
 
         public Office Office { get; set; }
-        
-     
-        public Price PurchasePrice { get;} = new Price();
-        
-        
-        public DateOnly EndOfLifeDate { get {
-                return PurchaseDate.AddMonths(AssetLifespanInMonths);} }
+
+
+        public Price PurchasePrice { get; } = new Price();
+
+
+        public DateTime EndOfLifeDate { get {
+                return PurchaseDate.AddMonths(AssetLifespanInMonths); } }
 
         protected Asset() { }
 
-        protected Asset(Office office, Price price, DateOnly purchaseDate, string model, Brand brandName = Brand.Unknown)
+        protected Asset(Office office, Price price, DateTime purchaseDate, string model, Brand brandName = Brand.Unknown)
         {
             Model = model;
-            BrandName = brandName;   
+            BrandName = brandName;
             PurchasePrice = price;
-            PurchaseDate = purchaseDate; 
-            Office = office;    
+            PurchaseDate = purchaseDate;
+            Office = office;
         }
 
 
         public int GetDaysRemainingToEndOfLife() =>
-            IsEndOfLife() ? 0 : EndOfLifeDate.DayNumber - DateOnly.FromDateTime(DateTime.Now).DayNumber;
-                     
+            IsEndOfLife() ? 0 : (int) (EndOfLifeDate - DateTime.Now).TotalDays;
 
-        public bool IsEndOfLife() => 
-            (EndOfLifeDate <= DateOnly.FromDateTime(DateTime.Now));
 
-  
+        public bool IsEndOfLife() =>
+            (EndOfLifeDate <= DateTime.Now);
+
+
         public virtual string GetAssetType()
         {
             return this.GetType().Name;
@@ -55,7 +58,7 @@ namespace AssetTracking1.Models
     {
         public Laptop() { }
 
-        public Laptop(Office office,Price price, DateOnly purchaseDate, string model, Brand brandName = Brand.Unknown) : base(office, price, purchaseDate, model, brandName)
+        public Laptop(Office office, Price price, DateTime purchaseDate, string model, Brand brandName = Brand.Unknown) : base(office, price, purchaseDate, model, brandName)
         { }
 
         public override string GetAssetType()
@@ -68,7 +71,7 @@ namespace AssetTracking1.Models
     public class Desktop : Computer
     {
         public Desktop() { }
-        public Desktop(Office office,Price price, DateOnly purchaseDate, string model, Brand brandName = Brand.Unknown) : base(office, price, purchaseDate, model, brandName)
+        public Desktop(Office office, Price price, DateTime purchaseDate, string model, Brand brandName = Brand.Unknown) : base(office, price, purchaseDate, model, brandName)
         { }
 
         public override string GetAssetType()
@@ -80,7 +83,7 @@ namespace AssetTracking1.Models
     public class Mobile : Asset
     {
         public Mobile() { }
-        public Mobile(Office office,Price price, DateOnly purchaseDate, string model, Brand brandName = Brand.Unknown) : base(office, price, purchaseDate, model, brandName)
+        public Mobile(Office office, Price price, DateTime purchaseDate, string model, Brand brandName = Brand.Unknown) : base(office, price, purchaseDate, model, brandName)
         { }
 
         public override string GetAssetType()
@@ -93,7 +96,7 @@ namespace AssetTracking1.Models
     public abstract class Computer : Asset
     {
         public Computer() { }
-        public Computer(Office office,Price price, DateOnly purchaseDate, string model, Brand brandName = Brand.Unknown) : base(office, price, purchaseDate, model, brandName)
+        public Computer(Office office, Price price, DateTime purchaseDate, string model, Brand brandName = Brand.Unknown) : base(office, price, purchaseDate, model, brandName)
         { }
 
         public override string GetAssetType()
@@ -108,22 +111,26 @@ namespace AssetTracking1.Models
     {
         public Office() { }
 
+        public int OfficeId { get; set; }
+
+
         [Required]
-        public String  Name { get; set; } = String.Empty;
+        public String Name { get; set; } = String.Empty;
 
         [Required]
         public String Currency { get; set; } = "USD";
 
-        public Office(String name, string currency)
+        public Office(int id,String name, string currency)
         {
+            this.OfficeId = id;
             this.Name = name;
-            Currency = currency;    
+            Currency = currency;
         }
 
     }//class Office
 
 
-    public class Price: IComparable<Price>
+    public class Price : IComparable<Price>
     {
         [Required]
         public decimal PurchasePrice { get; set; } = 0.0M;
@@ -138,7 +145,7 @@ namespace AssetTracking1.Models
         public Price(decimal price = 0.0M)
         {
             this.PurchasePrice = price;
-          
+
         }
 
     }//class Price
@@ -146,17 +153,18 @@ namespace AssetTracking1.Models
 
     [System.Flags]
     public enum Brand : uint  //32 Brands are the maximum
-    { 
-        Apple       = 0,  
-        Asus        = 2,
-        Hp          = 4, 
-        Huawei      = 8,    
-        Lenovo      = 16,
-        Motorola    = 32,
-        Nokia       = 64,
-        Samsung     = 128,
-        Unknown     = 256
+    {
+        Apple = 0,
+        Asus = 2,
+        Hp = 4,
+        Huawei = 8,
+        Lenovo = 16,
+        Motorola = 32,
+        Nokia = 64,
+        Samsung = 128,
+        Unknown = 256
     }// enum Brand
 
+   
 
 }//namespace

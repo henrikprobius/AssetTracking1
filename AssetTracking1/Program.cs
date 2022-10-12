@@ -1,33 +1,35 @@
 ﻿using AssetTracking1.Models;
 using AssetTracking1;
 using System.Text;
+using AssetTracking1.Storage;
 
 // "1" is office in Sweden with currency SEK
 // "2" is office in Norway with currency NOK
 // "3" is office in Japan with currency JPY
-AssetDatastore.offices.Add("1",new("Sweden", "SEK"));
-AssetDatastore.offices.Add("2", new("Norway", "NOK"));
-AssetDatastore.offices.Add("3", new("Japan", "JPY"));
-Test();
-PrintAssets();
+
+AssetDatastore store = new AssetDatastore();
+//Test();
+//PrintAssets();
+
+
+
 
 var thekey = ConsoleKey.Q;
 do
 {
-    Console.Clear();
+    //Console.Clear();
     Console.WriteLine("Press F2 to add Assets" + "\n" + "Press F3 to print all assets" +  "\n" + "Press q to quit");
     thekey = Console.ReadKey().Key;
     if (thekey == ConsoleKey.F2) { EnterAssets(); }
     else if (thekey == ConsoleKey.F3) { PrintAssets(); }
-    //jfddlsjfkfölskfölsköl
 
 } while (thekey != ConsoleKey.Q);
 
+store = null;
 
 /************************** Methods **************************/
 void EnterAssets()
 {
-
     bool doRun = true;
     (bool success, string msg) msg;
     String? indata;
@@ -54,7 +56,7 @@ void EnterAssets()
             try
             {
                 strings = StringExtensions.Split(indata, ",",6);
-                msg = AssetDatastore.AddAsset(strings);
+                msg = store.AddAsset(strings);
                 Console.WriteLine(msg.msg + "\n");
             }
             catch (Exception ex) { Console.WriteLine(ex.Message); }
@@ -64,22 +66,19 @@ void EnterAssets()
 
 }
 
-void LoadTestData()
-    {
-        AssetDatastore.LoadTestData();      
-}
+
 
 void PrintAssets()
     {
     Console.Clear();
     int padding = 15;
-    if(AssetDatastore.Assets.Count < 1)
+    if(store.Assets().Count < 1)
     {
         Console.WriteLine("There are no Assets yet, press any key to continue");
         var mykey = Console.ReadKey().Key;
         return;
     }
-    var t = AssetDatastore.Assets.OrderBy(c => c.GetAssetType()).ThenBy(c => c.PurchaseDate);
+    var t = store.Assets().OrderBy(c => c.GetAssetType()).ThenBy(c => c.PurchaseDate);
 
     Console.WriteLine("Type".PadRight(padding) +" Brand".PadRight(padding) +"  Model".PadRight(padding) +"   Office".PadRight(padding) + "    PurchaseDate".PadRight(padding) + "      DueDate".PadRight(padding) + "      Active".PadRight(padding) + "        Daysleft".PadRight(padding) + "         Price $".PadRight(padding)+ "          LocalPrice".PadRight(padding));
     foreach (var asset in t)
@@ -129,7 +128,7 @@ void Test()
         try
         {
             split = StringExtensions.Split(sample, ",", 6);
-            msg = AssetDatastore.AddAsset(split);
+            msg = store.AddAsset(split);
         }
         catch (Exception e)
         {
@@ -139,7 +138,7 @@ void Test()
         Console.WriteLine(sample + "    Generated output: "+ msg.success + " " + msg.msg);
     }
 
-    Console.WriteLine("AssetCount = "+ AssetDatastore.Assets.Count().ToString());
+   // Console.WriteLine("AssetCount = "+ AssetDatastore.Assets.Count().ToString());
 
 }
 
