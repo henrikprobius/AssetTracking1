@@ -29,7 +29,7 @@ namespace AssetTracking1.Storage
 
             a.Model = data[1];
             a.PurchaseDate = purchasedate;
-            a.PurchasePrice.PurchasePrice = price;
+            a.PurchasePrice = price;
 
             a.BrandName = (Brand)Enum.Parse(typeof(Brand), brand);
             //a.Office = offices[data[5]];

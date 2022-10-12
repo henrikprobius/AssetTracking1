@@ -10,7 +10,7 @@ namespace AssetTracking1.Models
 
         public Guid AssetId { get; set; } = Guid.Empty; 
 
-        [Required]
+
         public String Model { get; set; } = String.Empty;
         public Brand BrandName { get; set; } = Brand.Unknown;
 
@@ -19,8 +19,21 @@ namespace AssetTracking1.Models
 
         public Office Office { get; set; }
 
+        [NotMapped]
+        public Price Price { get; } = new Price();
 
-        public Price PurchasePrice { get; } = new Price();
+        public decimal PurchasePrice {
+            get
+            {
+                return Price.PurchasePrice;
+            }
+
+            set
+            {
+                Price.PurchasePrice = value;
+            } 
+                
+        }
 
 
         public DateTime EndOfLifeDate { get {
@@ -28,11 +41,11 @@ namespace AssetTracking1.Models
 
         protected Asset() { }
 
-        protected Asset(Office office, Price price, DateTime purchaseDate, string model, Brand brandName = Brand.Unknown)
+        protected Asset(Office office, decimal price, DateTime purchaseDate, string model, Brand brandName = Brand.Unknown)
         {
             Model = model;
             BrandName = brandName;
-            PurchasePrice = price;
+            Price.PurchasePrice = price;
             PurchaseDate = purchaseDate;
             Office = office;
         }
@@ -58,7 +71,7 @@ namespace AssetTracking1.Models
     {
         public Laptop() { }
 
-        public Laptop(Office office, Price price, DateTime purchaseDate, string model, Brand brandName = Brand.Unknown) : base(office, price, purchaseDate, model, brandName)
+        public Laptop(Office office, decimal price, DateTime purchaseDate, string model, Brand brandName = Brand.Unknown) : base(office, price, purchaseDate, model, brandName)
         { }
 
         public override string GetAssetType()
@@ -71,7 +84,7 @@ namespace AssetTracking1.Models
     public class Desktop : Computer
     {
         public Desktop() { }
-        public Desktop(Office office, Price price, DateTime purchaseDate, string model, Brand brandName = Brand.Unknown) : base(office, price, purchaseDate, model, brandName)
+        public Desktop(Office office, decimal price, DateTime purchaseDate, string model, Brand brandName = Brand.Unknown) : base(office, price, purchaseDate, model, brandName)
         { }
 
         public override string GetAssetType()
@@ -83,7 +96,7 @@ namespace AssetTracking1.Models
     public class Mobile : Asset
     {
         public Mobile() { }
-        public Mobile(Office office, Price price, DateTime purchaseDate, string model, Brand brandName = Brand.Unknown) : base(office, price, purchaseDate, model, brandName)
+        public Mobile(Office office, decimal price, DateTime purchaseDate, string model, Brand brandName = Brand.Unknown) : base(office, price, purchaseDate, model, brandName)
         { }
 
         public override string GetAssetType()
@@ -96,7 +109,7 @@ namespace AssetTracking1.Models
     public abstract class Computer : Asset
     {
         public Computer() { }
-        public Computer(Office office, Price price, DateTime purchaseDate, string model, Brand brandName = Brand.Unknown) : base(office, price, purchaseDate, model, brandName)
+        public Computer(Office office, decimal price, DateTime purchaseDate, string model, Brand brandName = Brand.Unknown) : base(office, price, purchaseDate, model, brandName)
         { }
 
         public override string GetAssetType()
@@ -114,7 +127,6 @@ namespace AssetTracking1.Models
         public int OfficeId { get; set; }
 
 
-        [Required]
         public String Name { get; set; } = String.Empty;
 
         [Required]
@@ -135,7 +147,6 @@ namespace AssetTracking1.Models
         [Required]
         public decimal PurchasePrice { get; set; } = 0.0M;
 
-        [Required]
         public String Currency { get; set; } = "USD";
 
         public int CompareTo(Price price)

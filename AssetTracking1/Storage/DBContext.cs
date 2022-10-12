@@ -1,6 +1,9 @@
 ﻿using AssetTracking1.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Reflection.Metadata;
+using System.Xml.Linq;
 
 namespace AssetTracking1.Storage
 {
@@ -39,7 +42,23 @@ namespace AssetTracking1.Storage
           protected override void OnModelCreating(ModelBuilder modelBuilder)
           {
             Console.WriteLine("OnModelCreating in class DatabaseContext");
-            //modelBuilder.Entity<MyTask>().Property(m => m.Status).HasColumnType("int");
+            modelBuilder.Entity<Computer>().HasBaseType<Asset>();
+            modelBuilder.Entity<Laptop>().HasBaseType<Computer>();
+            modelBuilder.Entity<Desktop>().HasBaseType<Computer>();
+            modelBuilder.Entity<Mobile>().HasBaseType<Asset>();
+
+
+            modelBuilder.Entity<Asset>()
+            .Property("Discriminator")
+            .HasMaxLength(200);
+
+            modelBuilder.Entity<Asset>().Property(m => m.BrandName).HasColumnType("int");
+            modelBuilder.Entity<Asset>().Property(m => m.Model).HasColumnType("nvarchar(50)");
+
+            modelBuilder.Entity<Office>().Property(m => m.Name).HasColumnType("nvarchar(50)");
+            modelBuilder.Entity<Office>().Property(m => m.Currency).HasColumnType("char(3)");
+
+
             //base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Office>().HasData(new Office(1,"Sweden", "SEK"), new Office(2, "Norway", "NOK"), new Office(3, "Japan", "JPY"));
         }

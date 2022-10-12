@@ -86,10 +86,10 @@ void PrintAssets()
         Console.ForegroundColor = ConsoleColor.White;
         if (asset.GetDaysRemainingToEndOfLife() < 92 && !asset.IsEndOfLife()) Console.ForegroundColor = ConsoleColor.Red;
         else if (asset.GetDaysRemainingToEndOfLife() < 183 && !asset.IsEndOfLife()) Console.ForegroundColor = ConsoleColor.Yellow;
-        var localprice = CurrencyExchanger.Exchange(asset.PurchasePrice.Currency, asset.Office.Currency,asset.PurchasePrice.PurchasePrice);
+        var localprice = CurrencyExchanger.Exchange(asset.Price.Currency, asset.Office.Currency,asset.Price.PurchasePrice);
         Console.WriteLine($"{asset.GetAssetType().PadRight(padding)} {asset.BrandName.ToString().PadRight(padding)} {asset.Model.PadRight(padding)} {asset.Office.Name.PadRight(padding)} {asset.PurchaseDate.ToString().PadRight(padding)} " +
             $"  {asset.EndOfLifeDate.ToString().PadRight(padding)} {(!asset.IsEndOfLife()).ToString().PadRight(padding)} " +
-            $"  {asset.GetDaysRemainingToEndOfLife().ToString().PadRight(padding)} {asset.PurchasePrice.PurchasePrice.ToString().PadRight(padding)} {(localprice +" "+ asset.Office.Currency).PadRight(padding)}");
+            $"  {asset.GetDaysRemainingToEndOfLife().ToString().PadRight(padding)} {asset.Price.PurchasePrice.ToString().PadRight(padding)} {(localprice +" "+ asset.Office.Currency).PadRight(padding)}");
     }
 
     Console.WriteLine("Press any key to continue");
