@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AssetTracking1.Models
 {
-    public class Asset
+    public abstract class Asset
     {
         public static readonly int AssetLifespanInMonths = 36;
 
@@ -14,8 +14,7 @@ namespace AssetTracking1.Models
         public String Model { get; set; } = String.Empty;
         public Brand BrandName { get; set; } = Brand.Unknown;
 
-
-        public DateTime PurchaseDate { get; set; } =DateTime.Now;
+        public DateTime PurchaseDate { get; set; } = DateTime.Now;
 
         public Office Office { get; set; }
 
@@ -36,8 +35,18 @@ namespace AssetTracking1.Models
         }
 
 
-        public DateTime EndOfLifeDate { get {
-                return PurchaseDate.AddMonths(AssetLifespanInMonths); } }
+        public DateOnly EndOfLifeDate{ 
+            get {
+                var e = PurchaseDate.AddMonths(AssetLifespanInMonths);
+                return new DateOnly(e.Year,e.Month,e.Day);               
+            }
+        }
+
+        public DateOnly GetPurchaseDate()
+        {
+            return DateOnly.FromDateTime(PurchaseDate);
+
+        }
 
         protected Asset() { }
 
@@ -52,11 +61,11 @@ namespace AssetTracking1.Models
 
 
         public int GetDaysRemainingToEndOfLife() =>
-            IsEndOfLife() ? 0 : (int) (EndOfLifeDate - DateTime.Now).TotalDays;
+            IsEndOfLife() ? 0 : (int) (EndOfLifeDate.DayNumber - DateOnly.FromDateTime(DateTime.Today).DayNumber);
 
 
         public bool IsEndOfLife() =>
-            (EndOfLifeDate <= DateTime.Now);
+            (EndOfLifeDate <= DateOnly.FromDateTime(DateTime.Today));
 
 
         public virtual string GetAssetType()

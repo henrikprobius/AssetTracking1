@@ -8,16 +8,26 @@ using AssetTracking1.Storage;
 // "3" is office in Japan with currency JPY
 
 AssetDatastore store = new AssetDatastore();
-//Test();
+
+//store.DeleteAsset(new Guid("76607978-B6D7-460A-0810-08DAAC7B8917"));
+
+/*
+var ass = store.GetAsset(new Guid("B135BF44-6ADB-4447-F7B3-08DAACEE874E"));
+if (ass is not null)
+{
+    ass.Model = "ny modell2";
+    ass.PurchasePrice = 598.0M;
+    store.UpdateAsset(ass);
+}
+*/
+
 //PrintAssets();
-
-
 
 
 var thekey = ConsoleKey.Q;
 do
 {
-    //Console.Clear();
+    Console.Clear();
     Console.WriteLine("Press F2 to add Assets" + "\n" + "Press F3 to print all assets" +  "\n" + "Press q to quit");
     thekey = Console.ReadKey().Key;
     if (thekey == ConsoleKey.F2) { EnterAssets(); }
@@ -84,10 +94,14 @@ void PrintAssets()
     foreach (var asset in t)
     {
         Console.ForegroundColor = ConsoleColor.White;
-        if (asset.GetDaysRemainingToEndOfLife() < 92 && !asset.IsEndOfLife()) Console.ForegroundColor = ConsoleColor.Red;
-        else if (asset.GetDaysRemainingToEndOfLife() < 183 && !asset.IsEndOfLife()) Console.ForegroundColor = ConsoleColor.Yellow;
+
+        if (asset.GetDaysRemainingToEndOfLife() < 92 && !asset.IsEndOfLife()) 
+            Console.ForegroundColor = ConsoleColor.Red;
+        else if (asset.GetDaysRemainingToEndOfLife() < 183 && !asset.IsEndOfLife()) 
+            Console.ForegroundColor = ConsoleColor.Yellow;
         var localprice = CurrencyExchanger.Exchange(asset.Price.Currency, asset.Office.Currency,asset.Price.PurchasePrice);
-        Console.WriteLine($"{asset.GetAssetType().PadRight(padding)} {asset.BrandName.ToString().PadRight(padding)} {asset.Model.PadRight(padding)} {asset.Office.Name.PadRight(padding)} {asset.PurchaseDate.ToString().PadRight(padding)} " +
+
+        Console.WriteLine($"{asset.GetAssetType().PadRight(padding)} {asset.BrandName.ToString().PadRight(padding)} {asset.Model.PadRight(padding)} {asset.Office.Name.PadRight(padding)} {asset.GetPurchaseDate().ToString().PadRight(padding)} " +
             $"  {asset.EndOfLifeDate.ToString().PadRight(padding)} {(!asset.IsEndOfLife()).ToString().PadRight(padding)} " +
             $"  {asset.GetDaysRemainingToEndOfLife().ToString().PadRight(padding)} {asset.Price.PurchasePrice.ToString().PadRight(padding)} {(localprice +" "+ asset.Office.Currency).PadRight(padding)}");
     }
@@ -96,11 +110,6 @@ void PrintAssets()
     var key = Console.ReadKey().Key;
 }
 
-void Test()
-{
-   
-
-}
 
 public static class StringExtensions
 {

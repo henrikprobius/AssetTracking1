@@ -10,8 +10,7 @@ namespace AssetTracking1.Storage
         public AssetDatastore()
         {
             context.DropAndCreateDB();
-            this.AddTestAssets();
-
+            this.AddTestAssets();           
         }
         public (bool, string) AddAsset(string[] data)
         {
@@ -35,12 +34,32 @@ namespace AssetTracking1.Storage
 
             context.Assets.Add(a);
             context.SaveChanges();
-            //Assets.Add(a);
 
             return (true, "Success adding a new Asset");
         }
 
-        
+        public (bool, string) DeleteAsset(Guid id)
+        {
+
+            Asset? ass = context.Assets.Find(id);
+            if(ass is null) return (false, "Invalid Id");
+            context.Assets.Remove(ass);
+            context.SaveChanges();  
+            return (true, "Success deleting Asset");
+        }
+
+        public Asset? GetAsset(Guid id)
+        {
+            return context.Assets.Find(id);
+        }
+
+
+        public (bool, string) UpdateAsset(Asset a)
+        {
+            if(context.Assets.Find(a.AssetId) is null) return (false, "Invalid Id");
+            context.SaveChanges();
+            return (true, "Success updating Asset");
+        }
 
         private Asset? CreateClass(string typeName)
         {
@@ -52,13 +71,13 @@ namespace AssetTracking1.Storage
 
         public List<Asset> Assets()
         {
-            return context.Assets.ToList();
+            return context.Assets.Include(c => c.Office).ToList();            
         }
 
         private void AddTestAssets()
         {
 
-            Console.WriteLine("*************** Testcases ******************");
+            Console.WriteLine("Adding TestAssets");
 
             String[] samples =
             {
@@ -86,7 +105,7 @@ namespace AssetTracking1.Storage
                     Console.WriteLine(sample + "    Generated error: " + e.Message);
                 }
 
-                Console.WriteLine(sample + "    Generated output: " + msg.success + " " + msg.msg);
+               // Console.WriteLine(sample + "    Generated output: " + msg.success + " " + msg.msg);
             }
             /*             
                          //failure

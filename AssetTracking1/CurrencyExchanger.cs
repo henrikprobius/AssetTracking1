@@ -45,7 +45,6 @@ namespace AssetTracking1
 
     } //class CurrencyExchanger
 
-
 }
 
 
