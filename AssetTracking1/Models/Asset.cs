@@ -8,7 +8,7 @@ namespace AssetTracking1.Models
     {
         public static readonly int AssetLifespanInMonths = 36;
 
-        public Guid AssetId { get; set; } = Guid.Empty; 
+        public Guid AssetId { get; set; } = Guid.Empty;
 
 
         public String Model { get; set; } = String.Empty;
@@ -30,15 +30,15 @@ namespace AssetTracking1.Models
             set
             {
                 Price.PurchasePrice = value;
-            } 
-                
+            }
+
         }
 
 
-        public DateOnly EndOfLifeDate{ 
+        public DateOnly EndOfLifeDate {
             get {
                 var e = PurchaseDate.AddMonths(AssetLifespanInMonths);
-                return new DateOnly(e.Year,e.Month,e.Day);               
+                return new DateOnly(e.Year, e.Month, e.Day);
             }
         }
 
@@ -47,6 +47,9 @@ namespace AssetTracking1.Models
             return DateOnly.FromDateTime(PurchaseDate);
 
         }
+
+        public TrackInfo TrackInfo { get; set; } = new TrackInfo();
+
 
         protected Asset() { }
 
@@ -61,7 +64,7 @@ namespace AssetTracking1.Models
 
 
         public int GetDaysRemainingToEndOfLife() =>
-            IsEndOfLife() ? 0 : (int) (EndOfLifeDate.DayNumber - DateOnly.FromDateTime(DateTime.Today).DayNumber);
+            IsEndOfLife() ? 0 : (int)(EndOfLifeDate.DayNumber - DateOnly.FromDateTime(DateTime.Today).DayNumber);
 
 
         public bool IsEndOfLife() =>
@@ -141,7 +144,7 @@ namespace AssetTracking1.Models
         [Required]
         public String Currency { get; set; } = "USD";
 
-        public Office(int id,String name, string currency)
+        public Office(int id, String name, string currency)
         {
             this.OfficeId = id;
             this.Name = name;
@@ -170,6 +173,14 @@ namespace AssetTracking1.Models
 
     }//class Price
 
+
+    public class TrackInfo
+    {
+        public DateTime ChangeDate { get; set; } = DateTime.Now;    
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+
+        public string CreatedBy { get;set;} = string.Empty;
+    }
 
     [System.Flags]
     public enum Brand : uint  //32 Brands are the maximum

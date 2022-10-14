@@ -9,8 +9,9 @@ namespace AssetTracking1.Storage
 
         public AssetDatastore()
         {
-            context.DropAndCreateDB();
-            this.AddTestAssets();           
+            //context.DropAndCreateDB();
+            //this.AddTestAssets();
+            this.UpdateRandomAsset();
         }
         public (bool, string) AddAsset(string[] data)
         {
@@ -72,6 +73,12 @@ namespace AssetTracking1.Storage
         public List<Asset> Assets()
         {
             return context.Assets.Include(c => c.Office).ToList();            
+        }
+
+        public void UpdateRandomAsset()
+        {
+            Assets()[0].Model = "myNew Model";
+            context.SaveChanges(true);
         }
 
         private void AddTestAssets()

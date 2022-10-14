@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AssetTracking1.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20221014112701_initial")]
+    [Migration("20221014150937_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -137,7 +137,29 @@ namespace AssetTracking1.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsOne("AssetTracking1.Models.TrackInfo", "TrackInfo", b1 =>
+                        {
+                            b1.Property<Guid>("AssetId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<DateTime>("ChangeDate")
+                                .HasColumnType("datetime2");
+
+                            b1.Property<DateTime>("CreatedDate")
+                                .HasColumnType("datetime2");
+
+                            b1.HasKey("AssetId");
+
+                            b1.ToTable("Assets");
+
+                            b1.WithOwner()
+                                .HasForeignKey("AssetId");
+                        });
+
                     b.Navigation("Office");
+
+                    b.Navigation("TrackInfo")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

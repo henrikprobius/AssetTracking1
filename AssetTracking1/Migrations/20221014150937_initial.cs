@@ -33,6 +33,8 @@ namespace AssetTracking1.Migrations
                     PurchaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     OfficeId = table.Column<int>(type: "int", nullable: false),
                     PurchasePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TrackInfo_ChangeDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TrackInfo_CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false)
                 },
                 constraints: table =>
@@ -65,7 +67,18 @@ namespace AssetTracking1.Migrations
                 name: "IX_Assets_OfficeId",
                 table: "Assets",
                 column: "OfficeId");
+
+            migrationBuilder.Sql(@"CREATE TRIGGER update_trigger ON Assets 
+                                AFTER UPDATE AS 
+                                BEGIN 
+                                SET NOCOUNT ON; 
+                                UPDATE Assets set ChangeDate = GETDATE() 
+                                FROM Assets b INNER JOIN inserted i on b.AssetId=i.AssetId
+                                END");
+
         }
+
+
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {

@@ -64,6 +64,7 @@ namespace AssetTracking1.Storage
             modelBuilder.Entity<Office>().Property(m => m.Currency).HasColumnType("char(3)");
 
             modelBuilder.Entity<Office>().HasData(new Office(1,"Sweden", "SEK"), new Office(2, "Norway", "NOK"), new Office(3, "Japan", "JPY"));
+            modelBuilder.Entity<Asset>().OwnsOne(p => p.TrackInfo);
         }
         
 
