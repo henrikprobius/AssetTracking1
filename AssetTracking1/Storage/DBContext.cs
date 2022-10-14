@@ -20,6 +20,18 @@ namespace AssetTracking1.Storage
             bool created = Database.EnsureCreated();
         }
 
+        //här man du lägga till egna conventions
+        // tex om alla strängar ska vara nvarchar(100) i DB
+        //have... för alla, has.. för en typ
+        protected override void ConfigureConventions(ModelConfigurationBuilder c)
+        {
+            base.ConfigureConventions(c);
+            c.Properties<string>().HaveColumnType("nvarchar(100)");
+
+        }
+
+        
+        
         protected override void OnConfiguring(DbContextOptionsBuilder opt)
         {
             opt.UseSqlServer(connstring)
@@ -28,13 +40,18 @@ namespace AssetTracking1.Storage
             //opt.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         }
 
-          protected override void OnModelCreating(ModelBuilder modelBuilder)
+        // heter Owned Entities, OwnsOne heter metoden i modelbuilder på vald typ
+        //tex om du bryter ut alla namn på en Person i ett egen relaterad klass istället för enskilda fält
+        // obs om det finns Shadow Propertis så måste detta definieras i en migration
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
           {            
             modelBuilder.Entity<Computer>().HasBaseType<Asset>();
             modelBuilder.Entity<Laptop>().HasBaseType<Computer>();
             modelBuilder.Entity<Desktop>().HasBaseType<Computer>();
             modelBuilder.Entity<Mobile>().HasBaseType<Asset>();
 
+            // det finns AutoInclude = true, alla frågor tar med relaterade object implicit
+            //HasConversion<T>, tex om någon Enum ska lagras som text istället i DB, lamda dct går också, kallas Value Conversions
 
             modelBuilder.Entity<Asset>()
             .Property("Discriminator")
